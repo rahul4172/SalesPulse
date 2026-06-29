@@ -20,6 +20,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
+import { useTheme } from 'next-themes';
 
 interface SalesChartProps {
   data: SalesData[];
@@ -30,6 +31,19 @@ interface SalesChartProps {
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d', '#ffc658', '#8dd1e1', '#a4de6c', '#d0ed57', '#f2c14e', '#f58231'];
 
 export function SalesChart({ data, chartType, onChartTypeChange }: SalesChartProps) {
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
+  
+  const gridColor = isDark ? '#334155' : '#E5E7EB';
+  const axisColor = isDark ? '#94a3b8' : '#6B7280';
+  const tooltipStyle = {
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
+    borderColor: isDark ? '#334155' : '#e2e8f0',
+    color: isDark ? '#f8fafc' : '#0f172a',
+    borderRadius: '8px',
+    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+  };
+
   const renderChart = () => {
     if (data.length === 0) {
       return (
@@ -44,15 +58,15 @@ export function SalesChart({ data, chartType, onChartTypeChange }: SalesChartPro
         return (
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
-              <XAxis dataKey="month" stroke="#6B7280" fontSize={12} tickLine={false} axisLine={false} />
-              <YAxis stroke="#6B7280" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `$${value}`} />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={gridColor} />
+              <XAxis dataKey="month" stroke={axisColor} fontSize={12} tickLine={false} axisLine={false} />
+              <YAxis stroke={axisColor} fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `$${value}`} />
               <Tooltip
-                cursor={{ fill: '#F3F4F6' }}
-                contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                cursor={{ fill: isDark ? '#334155' : '#F3F4F6' }}
+                contentStyle={tooltipStyle}
               />
-              <Legend />
-              <Bar dataKey="sales" name="Sales" fill="#2563EB" radius={[4, 4, 0, 0]} />
+              <Legend wrapperStyle={{ color: axisColor }} />
+              <Bar dataKey="sales" name="Sales" fill="#3b82f6" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         );
@@ -60,14 +74,12 @@ export function SalesChart({ data, chartType, onChartTypeChange }: SalesChartPro
         return (
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
-              <XAxis dataKey="month" stroke="#6B7280" fontSize={12} tickLine={false} axisLine={false} />
-              <YAxis stroke="#6B7280" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `$${value}`} />
-              <Tooltip
-                contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
-              />
-              <Legend />
-              <Line type="monotone" dataKey="sales" name="Sales" stroke="#2563EB" strokeWidth={3} activeDot={{ r: 8 }} />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={gridColor} />
+              <XAxis dataKey="month" stroke={axisColor} fontSize={12} tickLine={false} axisLine={false} />
+              <YAxis stroke={axisColor} fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `$${value}`} />
+              <Tooltip contentStyle={tooltipStyle} />
+              <Legend wrapperStyle={{ color: axisColor }} />
+              <Line type="monotone" dataKey="sales" name="Sales" stroke="#3b82f6" strokeWidth={3} activeDot={{ r: 8 }} />
             </LineChart>
           </ResponsiveContainer>
         );
@@ -90,10 +102,8 @@ export function SalesChart({ data, chartType, onChartTypeChange }: SalesChartPro
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
-              <Tooltip
-                contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
-              />
-              <Legend />
+              <Tooltip contentStyle={tooltipStyle} />
+              <Legend wrapperStyle={{ color: axisColor }} />
             </PieChart>
           </ResponsiveContainer>
         );
